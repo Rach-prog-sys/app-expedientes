@@ -756,15 +756,6 @@ function DetailSheet({ exp, onClose, onUpdate }) {
   );
 }
 
-function Row({ label, children }) {
-  return (
-    <div className="flex items-center justify-between py-1.5 border-b border-[#EDE9DF] last:border-0 gap-3">
-      <span className="text-[13px] text-[#9C9482] shrink-0">{label}</span>
-      <span className="text-right">{children}</span>
-    </div>
-  );
-}
-
 function Select({ label, value, onChange, options }) {
   return (
     <div className="relative shrink-0">
@@ -2012,4 +2003,12 @@ export default function AppConPin() {
     return <PantallaPin onUnlock={() => setDesbloqueado(true)} />;
   }
   return <ExpedientesApp />;
+}
+function Row({ label, children }) {
+  return (
+    <div className="flex items-center justify-between py-1.5 border-b border-[#EDE9DF]">
+      <span className="text-[13px] text-[#9C9482] shrink-0">{label}</span>
+      <span className="text-right">{children}</span>
+    </div>
+  );
 }
