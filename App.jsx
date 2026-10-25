@@ -727,10 +727,7 @@ function DetailSheet({ exp, onClose, onUpdate }) {
                 <td style={{ padding: "6px 0", fontWeight: 500 }}>{valor}</td>
               </tr>
             ))}
-          </tbody>
-        </table>
-
-        {exp.notas && (
+          {exp.notas && (
           <div style={{ marginBottom: "20px" }}>
             <p style={{ fontSize: "12px", color: "#8A9482", margin: "0 0 4px 0", fontWeight: 600 }}>NOTAS</p>
             <p style={{ fontSize: "13px", margin: 0 }}>{exp.notas}</p>
@@ -752,9 +749,10 @@ function DetailSheet({ exp, onClose, onUpdate }) {
           Impreso el {HOY.toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" })}
         </p>
       </div>
-  
+    </div>
   );
 }
+
 // --- FUNCIONES Y COMPONENTES AUXILIARES GLOBALES ---
 
 function Row({ label, value }) {
