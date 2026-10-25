@@ -676,13 +676,19 @@ function DetailSheet({ exp, onClose, onUpdate }) {
             >
               <Printer size={17} /> Imprimir
             </button>
-          </div>
-          <button
-            className="w-full flex items-center justify-center gap-2 text-white rounded-2xl py-3.5 font-medium transition-colors"
-            style={{ backgroundColor: "#1D5854" }}
-          >
-            <ExternalLink size={17} /> Abrir en Google Drive
-          </button>
+       <button 
+  onClick={() => {
+    if (exp && exp.driveFileId) {
+      window.open(`https://drive.google.com/file/d/${exp.driveFileId}/view`, '_blank');
+    } else {
+      alert("Este expediente aún no está sincronizado con Google Drive.");
+    }
+  }}
+  className="w-full flex items-center justify-center gap-2 text-white rounded-2xl py-3.5 font-medium transition-colors"
+  style={{ backgroundColor: "#1D5854" }}
+>
+  <ExternalLink size={17} /> Abrir en Google Drive
+</button>
         </div>
       </div>
 
