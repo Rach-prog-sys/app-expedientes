@@ -1,0 +1,16 @@
+# Dependencias y resultado del armado
+node_modules/
+dist/
+
+# NUNCA subir credenciales ni claves
+.env
+.env.*
+*.pem
+client_secret*.json
+credentials*.json
+*secret*.json
+*.key
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
