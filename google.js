@@ -45,3 +45,11 @@ export function requestGoogleLogin() {
     console.error('El cliente de Google no está inicializado.');
   }
 }
+// Función para abrir un archivo específico en Google Drive usando su ID
+export function abrirArchivoEnDrive(fileId) {
+  if (fileId) {
+    window.open(`https://drive.google.com/file/d/${fileId}/view`, '_blank');
+  } else {
+    alert("Este expediente aún no tiene un archivo vinculado en Google Drive.");
+  }
+}
