@@ -754,7 +754,7 @@ function DetailSheet({ exp, onClose, onUpdate }) {
       </div>
     </div>
   );
-
+}
 // --- FUNCIONES Y COMPONENTES AUXILIARES GLOBALES ---
 
 function Row({ label, value }) {
