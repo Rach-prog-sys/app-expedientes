@@ -2012,3 +2012,29 @@ function Row({ label, children }) {
     </div>
   );
 }
+// Funciones auxiliares al final del archivo
+function Row({ label, children }) {
+  return (
+    <div className="flex items-center justify-between py-1.5 border-b border-[#EDE9DF]">
+      <span className="text-[13px] text-[#9C9482] shrink-0">{label}</span>
+      <span className="text-right">{children}</span>
+    </div>
+  );
+}
+
+function Select({ label, value, onChange, options }) {
+  return (
+    <div className="flex items-center justify-between py-1.5 border-b border-[#EDE9DF]">
+      <span className="text-[13px] text-[#9C9482] shrink-0">{label}</span>
+      <select 
+        value={value} 
+        onChange={onChange}
+        className="text-right bg-transparent text-sm font-medium focus:outline-none cursor-pointer"
+      >
+        {options.map((opt) => (
+          <option key={opt.value} value={opt.value}>{opt.label}</option>
+        ))}
+      </select>
+    </div>
+  );
+}
