@@ -1883,7 +1883,15 @@ function ExpedientesApp() {
 function PantallaPin({ onUnlock }) {
   const [pin, setPin] = useState("");
   const [error, setError] = useState(false);
-
+useEffect(() => {
+    initGoogleAuth(
+      (token) => {
+        console.log("¡Conectado con éxito!", token);
+        onUnlock();
+      },
+      (err) => console.error("Error de login:", err)
+    );
+  }, []);
   const tocarDigito = (d) => {
     if (pin.length >= 4) return;
     const nuevo = pin + d;
