@@ -2038,3 +2038,83 @@ function Select({ label, value, onChange, options }) {
     </div>
   );
 } 
+function Row({ label, children }) {
+  return (
+    <div className="flex items-center justify-between py-1.5 border-b border-[#EDE9DF] last:border-0 gap-3">
+      <span className="text-[13px] text-[#9C9482] shrink-0">{label}</span>
+      <span className="text-right">{children}</span>
+    </div>
+  );
+}
+
+function Select({ label, value, onChange, options }) {
+  return (
+    <div className="relative shrink-0">
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="appearance-none bg-white border border-[#D8E6E4] text-[13.5px] text-[#33281A] rounded-xl pl-3 pr-8 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-[#4FA39D] cursor-pointer"
+      >
+        {options.map((o) => (
+          <option key={o} value={o}>
+            {o === "Todos" ? `${label}: Todos` : o}
+          </option>
+        ))}
+      </select>
+      <ChevronDown size={14} className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[#8A9482]" />
+    </div>
+  );
+}
+
+function BotonVoz({ onResultado }) {
+  const [escuchando, setEscuchando] = useState(false);
+  const [noSoportado, setNoSoportado] = useState(false);
+
+  const iniciar = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      setNoSoportado(true);
+      setTimeout(() => setNoSoportado(false), 2500);
+      return;
+    }
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.lang = "es-AR";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+      recognition.onstart = () => setEscuchando(true);
+      recognition.onend = () => setEscuchando(false);
+      recognition.onerror = () => setEscuchando(false);
+      recognition.onresult = (e) => {
+        const texto = e.results?.[0]?.[0]?.transcript || "";
+        if (texto) onResultado(texto);
+      };
+      recognition.start();
+    } catch {
+      setNoSoportado(true);
+      setTimeout(() => setNoSoportado(false), 2500);
+    }
+  };
+
+  return (
+    <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
+      <button
+        type="button"
+        onClick={iniciar}
+        title="Buscar por voz"
+        className="p-1.5 rounded-full transition-colors"
+        style={{
+          backgroundColor: escuchando ? "#C08872" : "transparent",
+          color: escuchando ? "#FFFFFF" : "#8A9482",
+        }}
+      >
+        <Mic size={16} />
+      </button>
+      {noSoportado && (
+        <div className="absolute right-0 top-9 z-10 bg-white border border-[#D8E6E4] rounded-lg px-2.5 py-1.5 text-[11.5px] text-[#5A5A4E] shadow-md whitespace-nowrap">
+          Búsqueda por voz no disponible en este navegador
+        </div>
+      )}
+    </div>
+  );
+}
