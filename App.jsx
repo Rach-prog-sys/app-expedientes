@@ -758,7 +758,7 @@ function DetailSheet({ exp, onClose, onUpdate }) {
 // --- FUNCIONES Y COMPONENTES AUXILIARES GLOBALES ---
 
 function Row({ label, value }) {
-  return (
+  
     <div className="flex justify-between py-1.5 border-b border-[#E7F2F1] text-[13.5px]">
       <span className="text-[#5A6B58]">{label}</span>
       <span className="text-[#33281A] font-medium text-right">{value}</span>
