@@ -752,7 +752,7 @@ function DetailSheet({ exp, onClose, onUpdate }) {
           Impreso el {HOY.toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" })}
         </p>
       </div>
-    </div>
+  
   );
 }
 // --- FUNCIONES Y COMPONENTES AUXILIARES GLOBALES ---
