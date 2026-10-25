@@ -734,6 +734,13 @@ function DetailSheet({ exp, onClose, onUpdate }) {
           </div>
         )}
 
+        {exp.notas && (
+          <div style={{ marginBottom: "20px" }}>
+            <p style={{ fontSize: "12px", color: "#8A9482", margin: "0 0 4px 0", fontWeight: 600 }}>NOTAS</p>
+            <p style={{ fontSize: "13px", margin: 0 }}>{exp.notas}</p>
+          </div>
+        )}
+
         {exp.historial && exp.historial.length > 0 && (
           <div>
             <p style={{ fontSize: "12px", color: "#8A9482", margin: "0 0 8px 0", fontWeight: 600 }}>HISTORIAL DE MOVIMIENTOS</p>
@@ -749,7 +756,6 @@ function DetailSheet({ exp, onClose, onUpdate }) {
           Impreso el {HOY.toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" })}
         </p>
       </div>
-    </div>
   );
 }
 
