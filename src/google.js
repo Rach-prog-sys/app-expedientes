@@ -6,7 +6,7 @@ const NOMBRE_INDICE = "Expedientes - Indice (App)";
 const DRIVE = "https://www.googleapis.com/drive/v3";
 const SHEETS = "https://sheets.googleapis.com/v4/spreadsheets";
 
-export const COLS_EXP = ["id","caratula","cuij","fuero","cliente","contraparte","tipo","estado","responsable","telefono","email","vencimiento","vencimientoLabel","resultado","actualizado","carpetaUrl","notas","historial"];
+export const COLS_EXP = ["id","caratula","cuij","fuero","cliente","contraparte","tipo","estado","responsable","telefono","email","vencimiento","vencimientoLabel","resultado","actualizado","carpetaUrl","notas","historial","quitado"];
 export const COLS_EV = ["id","titulo","tipo","fecha","hora","expedienteId","sonido"];
 
 let token = null, vence = 0, cliente = null, espera = null;
@@ -68,7 +68,7 @@ export async function usuario() {
 }
 
 const aFila = (cols, o) => cols.map((c) =>
-  c === "historial" ? JSON.stringify(o.historial || []) : c === "sonido" ? String(o.sonido !== false) : (o[c] ?? ""));
+  c === "historial" ? JSON.stringify(o.historial || []) : c === "sonido" ? String(o.sonido !== false) : c === "quitado" ? String(!!o.quitado) : (o[c] ?? ""));
 
 function deFila(cols, f) {
   const o = {};
@@ -80,7 +80,7 @@ const aExp = (f) => {
   const o = deFila(COLS_EXP, f);
   let h = [];
   try { h = JSON.parse(o.historial || "[]"); } catch { h = []; }
-  return { ...o, vencimiento: o.vencimiento || null, resultado: o.resultado || null, historial: h };
+  return { ...o, vencimiento: o.vencimiento || null, resultado: o.resultado || null, historial: h, quitado: o.quitado === "true" };
 };
 const aEv = (f) => {
   const o = deFila(COLS_EV, f);
