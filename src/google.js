@@ -123,3 +123,23 @@ export async function cargarTodo() {
 
 export const guardarExpedientes = (id, lista) => escribir(id, "Expedientes", COLS_EXP, lista);
 export const guardarEventos = (id, lista) => escribir(id, "Eventos", COLS_EV, lista);
+
+// Crea la carpeta de un caso dentro de la carpeta "Expedientes" del Drive
+// (si ya existe una carpeta con ese nombre en "Mi unidad", la usa; si no, la crea).
+let raizId = null;
+export async function crearCarpetaCaso(numero, cliente) {
+  if (!raizId) {
+    const q = encodeURIComponent("name='Expedientes' and mimeType='application/vnd.google-apps.folder' and 'root' in parents and trashed=false");
+    const r = await api(`${DRIVE}/files?q=${q}&fields=files(id)`);
+    raizId = r.files[0]?.id || (await api(`${DRIVE}/files?fields=id`, {
+      method: "POST",
+      body: JSON.stringify({ name: "Expedientes", mimeType: "application/vnd.google-apps.folder" }),
+    })).id;
+  }
+  const nombre = `${String(numero).replace(/[\\/]/g, "-")} - ${cliente}`;
+  const c = await api(`${DRIVE}/files?fields=id`, {
+    method: "POST",
+    body: JSON.stringify({ name: nombre, mimeType: "application/vnd.google-apps.folder", parents: [raizId] }),
+  });
+  return `https://drive.google.com/drive/folders/${c.id}`;
+}

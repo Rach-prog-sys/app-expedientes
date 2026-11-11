@@ -567,7 +567,7 @@ function FormEdicion({ exp, onGuardar, onCancelar }) {
   );
 }
 
-function DetailSheet({ exp, onClose, onUpdate, onDelete, onEditar }) {
+function DetailSheet({ exp, onClose, onUpdate, onDelete, onEditar, onCrearCarpeta }) {
   const [notaLocal, setNotaLocal] = useState("");
   const [nuevoMovimiento, setNuevoMovimiento] = useState("");
   const [modoAudiencia, setModoAudiencia] = useState(false);
@@ -805,6 +805,12 @@ function DetailSheet({ exp, onClose, onUpdate, onDelete, onEditar }) {
               <ExternalLink size={17} /> Abrir carpeta en Google Drive
             </button>
           ) : (
+            <>
+            {onCrearCarpeta && (
+              <button onClick={() => onCrearCarpeta(exp)} className="w-full rounded-2xl py-3 font-medium text-white" style={{ backgroundColor: "#1D5854" }}>
+                Crear carpeta en mi Drive
+              </button>
+            )}
             <div className="flex gap-2">
               <input
                 value={linkCarpeta}
@@ -820,6 +826,7 @@ function DetailSheet({ exp, onClose, onUpdate, onDelete, onEditar }) {
                 Vincular
               </button>
             </div>
+            </>
           )}
           <button
             onClick={() => { if (window.confirm(`¿Quitar el expediente N.º ${exp.id} de la app?\n\nDeja de verse acá, pero NO se borra: la fila sigue guardada en la planilla "Expedientes - Indice (App)" de tu Drive y la carpeta con los documentos no se toca. Se puede restaurar desde "Ver expedientes quitados".`)) onDelete(exp.id); }}
@@ -989,11 +996,11 @@ function CampoTexto({ label, value, onChange, placeholder, required }) {
   );
 }
 
-function NuevoExpedienteModal({ open, onClose, onSave }) {
+function NuevoExpedienteModal({ open, onClose, onSave, puedeCrearCarpeta }) {
   const vacio = {
     id: "", caratula: "", cuij: "", fuero: "", cliente: "", contraparte: "—",
     tipo: TIPOS[1], estado: "En estudio", responsable: RESPONSABLES[1],
-    telefono: "", email: "", vencimiento: "", vencimientoLabel: "", carpetaUrl: "",
+    telefono: "", email: "", vencimiento: "", vencimientoLabel: "", carpetaUrl: "", crearCarpeta: true,
   };
   const [form, setForm] = useState(vacio);
 
@@ -1078,6 +1085,12 @@ function NuevoExpedienteModal({ open, onClose, onSave }) {
 
         <CampoTexto label="Teléfono del cliente" value={form.telefono} onChange={set("telefono")} placeholder="+54 9 11 xxxx-xxxx" />
         <CampoTexto label="Link de la carpeta en Drive (opcional)" value={form.carpetaUrl} onChange={set("carpetaUrl")} placeholder="https://drive.google.com/drive/folders/..." />
+        {puedeCrearCarpeta && !form.carpetaUrl.trim() && (
+          <label className="flex items-start gap-2.5 mb-3 cursor-pointer">
+            <input type="checkbox" checked={form.crearCarpeta} onChange={(e) => set("crearCarpeta")(e.target.checked)} className="w-4 h-4 mt-0.5 accent-[#1D5854]" />
+            <span className="text-[13px] text-[#33281A]">Crear la carpeta del caso en mi Drive (dentro de "Expedientes")</span>
+          </label>
+        )}
         <CampoTexto label="Email del cliente" value={form.email} onChange={set("email")} placeholder="cliente@mail.com" />
 
         <div className="grid grid-cols-2 gap-3">
@@ -1435,10 +1448,28 @@ function ExpedientesApp({ datos, modo, usuario, indiceId, onSalir }) {
     editarConDeshacer(id, { estado: nuevoEstado }, `Estado cambiado a "${nuevoEstado}"`);
   };
 
-  const agregarExpediente = (nuevo) => {
+  const crearCarpetaDe = async (exp) => {
+    setGuardado("guardando");
+    try {
+      const url = await G.crearCarpetaCaso(exp.id, exp.cliente);
+      actualizarExpediente(exp.id, { carpetaUrl: url });
+    } catch {
+      setGuardado("error");
+      window.alert("No se pudo crear la carpeta en tu Drive. Probá de nuevo o pegá el link de una carpeta existente.");
+    }
+  };
+  const agregarExpediente = async (nuevo0) => {
+    const quiereCarpeta = nuevo0.crearCarpeta;
+    const nuevo = { ...nuevo0 };
+    delete nuevo.crearCarpeta;
     if (todosExp.some((e) => e.id === nuevo.id)) {
       window.alert(`Ya existe un expediente con el N.º ${nuevo.id} (puede estar entre los quitados).`);
       return;
+    }
+    if (quiereCarpeta && modo === "real" && !nuevo.carpetaUrl) {
+      setGuardado("guardando");
+      try { nuevo.carpetaUrl = await G.crearCarpetaCaso(nuevo.id, nuevo.cliente); }
+      catch { setGuardado("error"); window.alert("No se pudo crear la carpeta en tu Drive. El expediente se guarda igual; podés crearla o vincularla desde su ficha."); }
     }
     setExpedientes((prev) => [nuevo, ...prev]);
     setMostrarForm(false);
@@ -2110,6 +2141,7 @@ function ExpedientesApp({ datos, modo, usuario, indiceId, onSalir }) {
         open={mostrarForm}
         onClose={() => setMostrarForm(false)}
         onSave={agregarExpediente}
+        puedeCrearCarpeta={modo === "real"}
       />
 
       {deshacer && (
@@ -2120,7 +2152,7 @@ function ExpedientesApp({ datos, modo, usuario, indiceId, onSalir }) {
         </div>
       )}
 
-      <DetailSheet exp={selected} onClose={() => setSelected(null)} onUpdate={actualizarExpediente} onDelete={eliminarExpediente} onEditar={editarConDeshacer} />
+      <DetailSheet exp={selected} onClose={() => setSelected(null)} onUpdate={actualizarExpediente} onDelete={eliminarExpediente} onEditar={editarConDeshacer} onCrearCarpeta={modo === "real" ? crearCarpetaDe : undefined} />
     </div>
   );
 }
